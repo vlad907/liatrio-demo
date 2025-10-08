@@ -1,0 +1,13 @@
+# Binaries
+/server
+
+# Build outputs
+/dist/
+/bin/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
