@@ -51,7 +51,7 @@ Pipeline steps:
 
 1. Run unit tests (`go test ./...`)
 2. Build the Docker image
-3. Validate the container using the [`liatrio/github-apprentice-action`](https://github.com/liatrio/github-apprentice-action)
+3. Start the container on port 80 and validate it with the [`liatrio/github-apprentice-action`](https://github.com/liatrio/github-apprentice-action)
 4. Push a uniquely versioned tag (`:${GITHUB_RUN_NUMBER}`) and `:latest` to Docker Hub
 
 ### Required secrets
