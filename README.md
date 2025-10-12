@@ -38,7 +38,9 @@ Build and run:
 
 ```bash
 docker build -t liatrio-demo:local .
-docker run --rm -p 8080:8080 liatrio-demo:local
+docker run --rm -p 8080:80 liatrio-demo:local
+
+The container sets `PORT=80` by default, so adjust the host mapping if you need a different external port.
 ```
 
 ## GitHub Actions
@@ -65,8 +67,8 @@ Set the Docker repository name to match `DOCKERHUB_USERNAME/liatrio-demo` or upd
 
 After the image is pushed you can deploy it to any container platform. A simple approach:
 
-1. **AWS ECS (Fargate)** – create a task definition pinned to the pushed image tag, wire it to a service behind an Application Load Balancer, and expose port 8080.
-2. **GCP Cloud Run** – deploy the image with `gcloud run deploy`, make sure to pass the fully qualified Docker Hub image reference and set the port to 8080.
+1. **AWS ECS (Fargate)** – create a task definition pinned to the pushed image tag, wire it to a service behind an Application Load Balancer, and expose container port 80 (map to any listener you prefer).
+2. **GCP Cloud Run** – deploy the image with `gcloud run deploy`, make sure to pass the fully qualified Docker Hub image reference and keep the container port at 80 (set a different `PORT` env var if needed).
 3. **Azure Container Apps** – use `az containerapp up` pointing at the tag produced by the CI workflow.
 
 For extra credit, create a second workflow (e.g., `deploy.yml`) that triggers on `push` to `main`, pulls the image tag produced by the CI workflow, and updates the chosen platform automatically.

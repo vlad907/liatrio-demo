@@ -21,8 +21,8 @@ Choose whichever cloud platform you are most comfortable with. Below is a sugges
 3. **Task Definition**
    - Define a Fargate task with one container.
    - Image: `docker.io/<DOCKERHUB_USERNAME>/liatrio-demo:<CI_TAG>`
-   - Port mappings: container and host port 8080 (protocol TCP).
-   - Environment: optionally set `PORT=8080` (defaults to `8080`).
+   - Port mappings: container port 80 to whichever host/load balancer port you expose (protocol TCP).
+   - Environment: optionally set `PORT` (defaults to `80` in the container image).
 
 4. **Service & Load Balancer**
    - Create an Application Load Balancer targeting the ECS service.
