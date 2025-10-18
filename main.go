@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 	"time"
@@ -19,7 +20,12 @@ func buildApp() *fiber.App {
 			"timestamp": time.Now().UTC().UnixMilli(),
 		}
 
-		return c.JSON(payload)
+		response, err := json.Marshal(payload)
+		if err != nil {
+			return err
+		}
+
+		return c.Type("json").Send(response)
 	})
 
 	return app

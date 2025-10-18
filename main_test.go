@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,8 +22,14 @@ func TestRootHandler(t *testing.T) {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
 	}
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("failed to read response body: %v", err)
+	}
+
+	body = bytes.TrimSpace(body)
 	var payload map[string]any
-	if err := json.NewDecoder(resp.Body).Decode(&payload); err != nil {
+	if err := json.Unmarshal(body, &payload); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
@@ -33,5 +41,13 @@ func TestRootHandler(t *testing.T) {
 	if !ok || ts <= 0 {
 		t.Fatalf("timestamp is not a positive number: %v", payload["timestamp"])
 	}
-}
 
+	expected, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("failed to re-marshal payload: %v", err)
+	}
+
+	if !bytes.Equal(body, expected) {
+		t.Fatalf("response body is not minified JSON. got=%s want=%s", body, expected)
+	}
+}
