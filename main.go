@@ -16,7 +16,7 @@ func buildApp() *fiber.App {
 	app.Get("/", func(c *fiber.Ctx) error {
 		payload := fiber.Map{
 			"message":   "My name is " + candidateName,
-			"timestamp": time.Now().UTC().Unix(),
+			"timestamp": time.Now().UTC().UnixMilli(),
 		}
 
 		return c.JSON(payload)

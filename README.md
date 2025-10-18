@@ -13,7 +13,7 @@ GET /
 Response (minified JSON):
 
 ```json
-{"message":"My name is Vladimir Avdeev","timestamp":1716239023}
+{"message":"My name is Vladimir Avdeev","timestamp":1716239023000}
 ```
 
 `timestamp` is generated dynamically each request.
