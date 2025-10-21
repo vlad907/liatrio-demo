@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -15,17 +15,13 @@ func buildApp() *fiber.App {
 	app := fiber.New()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		payload := fiber.Map{
-			"message":   "My name is " + candidateName,
-			"timestamp": time.Now().UTC().UnixMilli(),
-		}
+		body := fmt.Sprintf(
+			`{"message":"My name is %s","timestamp":%d}`,
+			candidateName,
+			time.Now().UTC().UnixMilli(),
+		)
 
-		response, err := json.Marshal(payload)
-		if err != nil {
-			return err
-		}
-
-		return c.Type("json").Send(response)
+		return c.Type("json").SendString(body)
 	})
 
 	return app

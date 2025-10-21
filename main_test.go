@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -22,14 +23,20 @@ func TestRootHandler(t *testing.T) {
 		t.Fatalf("expected status %d, got %d", http.StatusOK, resp.StatusCode)
 	}
 
-	body, err := io.ReadAll(resp.Body)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("failed to read response body: %v", err)
 	}
 
-	body = bytes.TrimSpace(body)
+	bodyBytes = bytes.TrimSpace(bodyBytes)
+	body := string(bodyBytes)
+
+	if !strings.HasPrefix(body, `{"message":"My name is `) || !strings.HasSuffix(body, "}") {
+		t.Fatalf("response body format unexpected: %q", body)
+	}
+
 	var payload map[string]any
-	if err := json.Unmarshal(body, &payload); err != nil {
+	if err := json.Unmarshal(bodyBytes, &payload); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
@@ -42,12 +49,12 @@ func TestRootHandler(t *testing.T) {
 		t.Fatalf("timestamp is not a positive number: %v", payload["timestamp"])
 	}
 
-	expected, err := json.Marshal(payload)
-	if err != nil {
-		t.Fatalf("failed to re-marshal payload: %v", err)
+	var compact bytes.Buffer
+	if err := json.Compact(&compact, bodyBytes); err != nil {
+		t.Fatalf("failed to compact response: %v", err)
 	}
 
-	if !bytes.Equal(body, expected) {
-		t.Fatalf("response body is not minified JSON. got=%s want=%s", body, expected)
+	if !bytes.Equal(bodyBytes, compact.Bytes()) {
+		t.Fatalf("response body is not minified JSON. got=%s want=%s", bodyBytes, compact.Bytes())
 	}
 }
